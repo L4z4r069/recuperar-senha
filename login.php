@@ -1,23 +1,22 @@
 <?php
-
 // TODO usar sessão
 $email = $_POST['email'];
 $senha = $_POST['senha'];
 
-require_once "conecta.php";
+require_once "conexao.php";
 $conexao = conectar();
 
-$sql = "SELECT * FROM usuario WHERE email = '$email'";
-$resultado = $resultado = executarSQL($conexao, $sql);
+$sql = "SELECT * FROM usuario WHERE email='$email'";
+$resultado = executarSQL($conexao, $sql);
 
 $usuario = mysqli_fetch_assoc($resultado);
-if($usuario == NULL){
+if ($usuario == null) {
     echo "Email não existe no sistema! 
-    Por favor, primeiro realize o cadastro no sistema";
+          Por favor, primeiro realize o cadastro no sistema.";
     die();
 }
 if ($senha == $usuario['senha']) {
-    header('location: principal.php');
+    header("Location: principal.php");
 } else {
-    echo "Senha invalida! Tente novamente.";
+    echo "Senha inválida! Tente novamente.";
 }
