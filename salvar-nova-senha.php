@@ -1,9 +1,9 @@
 <?php
 
-//verificar email
-//verificar token
-$email = $_GET['email'];
-$token = $_GET['token'];
+$email = $_POST['email'];
+$token = $_POST['token'];
+$senha = $_POST['senha'];
+$repetirSenha = $_POST['repetirSenha'];
 
 require_once "conexao.php";
 $conexao = conectar();
@@ -31,26 +31,29 @@ if ($resultado == null) {
         Faça um novo pedido de recuperação de senha.";
         die();
     }
-}
+
+    if ($recuperar['usado'] == 1){
+        echo "Esse pedido de recuperação de senha já foi utilizado
+        anteriomente! Para recuperar a senha faça um novo pedido
+        de recuperação de senha";
+        die();
+    } 
+
+    if ($senha != $repetirSenha){
+        echo "A senha que você digitou é diferente de senha que você 
+        digitou no repetir senha. Por favor tente novamente!";
+        die();
+    }
+
+    $sql2 = "UPDATE usuario SET senha = '$senha' 
+             WHERE email = '$email'";
+    executarSQL($conexao, $sql2);
+    $sql3 = "UPDATE `recuperar-senha` SET usado=1 
+             WHERE email='$email' AND token='$token'";
+    executarSQL($conexao, $sql3);
+
+    echo "Nova senha cadastrada com sucesso! Faça o login
+    para acessar o sistema.<br>";
+    echo "<a href='index.php'>Acessar Sistema</a>";
+ }
 ?>
-<!DOCTYPE html>
-<html lang="pt-br">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova senha</title>
-</head>
-
-<body>
-    <form action="salvar-nova-senha.php" method="post">
-        <input type="hidden" name="email" value="<?= $email ?>">
-        <input type="hidden" name="token" value="<?= $token ?>">
-        Email: <?= $email ?><br>
-        <label>Senha: <input type="password" name="senha"></label><br>
-        <label>Repita a senha: <input type="password" name="repetirSenha"></label><br>
-        <input type="submit" value="Enviar">
-    </form>
-</body>
-
-</html>
